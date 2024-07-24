@@ -13,13 +13,13 @@ export const POST = async (request: NextRequest) => {
             return NextResponse.json({ message: "Invalid token" }, { status: 401 });
         }
 
-        const { username } = token;
+        const { _id } = token;
         const { link, title, tags } = reqBody;
 
         const newLink = new LinkModel({
             title: title ?? "No title has been given to this link",
             link,
-            user:username,
+            user:_id,
             tags
         })
 
