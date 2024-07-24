@@ -1,5 +1,5 @@
 import { dbConnection } from "@/lib/dbconnect";
-import { User, userModel } from "@/models/user.model";
+import {userModel } from "@/models/user.model";
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from "next/server";
 import { signupValidation, UserInput } from "@/schema/signupSchema";
@@ -14,8 +14,7 @@ export async function POST(request:NextRequest) {
         if (!parseResult.success) {
             return NextResponse.json({
                 success: false,
-                message: 'Validation error',
-                errors: parseResult.error.errors
+                message: parseResult.error.errors.map(err => err.message).join(", ")
               }, { status: 400 });
         }
 
