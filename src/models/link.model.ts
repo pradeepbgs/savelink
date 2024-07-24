@@ -3,7 +3,7 @@ import mongoose,{Document, Schema} from "mongoose";
 export interface Link extends Document {
     title: String,
     link:String,
-    user:mongoose.Schema.Types.ObjectId,
+    user:String,
     tags:String[]
 }
 
@@ -16,7 +16,7 @@ const LinkSchema:Schema<Link> = new Schema({
         required:true,
     },
     user:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:String,
         ref:"User",
         required:true,
     },

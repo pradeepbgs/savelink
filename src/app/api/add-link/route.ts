@@ -13,9 +13,21 @@ export const POST = async (request: NextRequest) => {
             return NextResponse.json({ message: "Invalid token" }, { status: 401 });
         }
 
-        const { user } = token;
+        const { username } = token;
         const { link, title, tags } = reqBody;
 
+        const newLink = new LinkModel({
+            title: title ?? "No title has been given to this link",
+            link,
+            user:username,
+            tags
+        })
+
+        await newLink.save();
+
+        return NextResponse.json({
+            message:"successfully created link"
+        },{status:200})
 
     } catch (error: any) {
         console.error("Error creating link:", error);
