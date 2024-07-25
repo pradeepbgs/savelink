@@ -50,8 +50,10 @@ export async function POST(request:NextRequest) {
          .sign(tokendata,process.env.JWT_TOKEN_SECRET??'',{expiresIn:"10d"})
 
         const response = NextResponse.json({
+            success: true ,
+            data: user,
+            token:token,
             message:"logged in success",
-            success: true
         },{status:200})
 
         response.cookies.set('token',token,{
