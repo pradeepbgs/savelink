@@ -10,7 +10,9 @@ export const POST = async (request: NextRequest) => {
         const token = await authjwt(request);
         
         if (!token) {
-            return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+            return NextResponse.json({
+                success:false,
+                 message: "Invalid token" }, { status: 401 });
         }
 
         const { _id } = token;
@@ -26,11 +28,14 @@ export const POST = async (request: NextRequest) => {
         await newLink.save();
 
         return NextResponse.json({
+            success:true,
             message:"successfully created link"
         },{status:200})
 
     } catch (error: any) {
         console.error("Error creating link:", error);
-        return NextResponse.json({ message: "An error occurred while creating the link", error: error.message }, { status: 500 });
+        return NextResponse.json({ 
+            success:false,
+            message: "An error occurred while creating the link", error: error.message }, { status: 500 });
     }
 };

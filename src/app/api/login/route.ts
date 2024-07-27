@@ -29,7 +29,7 @@ export async function POST(request:NextRequest) {
             return NextResponse.json({
                 success:false,
                 message:"couldn't find  user"
-            })
+            },{status:400})
         }
 
         const isPasswordValid = await bcrypt.compare(String(parsedResult.password),String(user.password))
