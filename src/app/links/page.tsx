@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 interface Link {
   _id: string;
@@ -42,6 +44,21 @@ const GetLinksPage = () => {
 
   const handleNextPage = () => {
     setPage(page + 1);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await axios.post('/api/links/delete-link', { link_id: id });
+      if (res.data.success) {
+        toast({
+          title: "Link deleted successfully",
+          description: "Your link has been deleted successfully",
+        })
+      }
+      setLinks(links.filter((link) => link._id !== id));
+    } catch (err) {
+      setError("Failed to delete link");
+    }
   };
 
   return (
@@ -88,6 +105,11 @@ const GetLinksPage = () => {
                       {tag}
                     </span>
                   ))}
+                </div>
+                <div className="mt-8">
+                <Button onClick={() => handleDelete(link._id)} variant={'default'}>
+                    Delete
+                  </Button>
                 </div>
               </motion.div>
             ))}

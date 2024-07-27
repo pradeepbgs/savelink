@@ -1,17 +1,23 @@
-import jwt from 'jsonwebtoken';
+import {jwtVerify} from 'jose';
 import { NextRequest } from 'next/server';
 
-export async function authjwt(request: NextRequest): Promise<jwt.JwtPayload | null> {
+export async function verifyToken(request: NextRequest): Promise<any> {
     try {
         const token = request.cookies.get('token')?.value ?? "";
-        const secret = process.env.JWT_TOKEN_SECRET;
+        const secret = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET);
+
+        if (!token) {
+            console.error("No token found in cookies");
+            return null;
+        }
 
         if (!secret) {
             throw new Error("JWT_TOKEN_SECRET is not defined");
         }
 
-        const decodedToken = jwt.verify(token, secret) as jwt.JwtPayload;
-        return decodedToken;
+        const {payload} = await jwtVerify(token, secret);
+        request.headers.set('user', JSON.stringify(payload));
+        return {payload};
     } catch (error: any) {
         console.error("JWT verification error:", error.message);
         return null;

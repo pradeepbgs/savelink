@@ -1,11 +1,13 @@
 import mongoose,{Document, Schema} from "mongoose";
+import { boolean } from "zod";
 
 export interface Link extends Document {
     title: String,
     link:String,
     user:mongoose.Schema.Types.ObjectId,
     tags:String[],
-    createdAt:Date
+    createdAt:Date,
+    isDeleted:Boolean
 }
 
 const LinkSchema:Schema<Link> = new Schema({
@@ -28,6 +30,10 @@ const LinkSchema:Schema<Link> = new Schema({
     createdAt:{
         type:Date,
         default:Date.now
+    },
+    isDeleted:{
+        type:Boolean,
+        default:false,
     }
 })
 

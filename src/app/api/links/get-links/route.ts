@@ -1,4 +1,4 @@
-import { authjwt } from "@/lib/authJWT";
+import { verifyToken } from "@/lib/authJWT";
 import { dbConnection } from "@/lib/dbconnect";
 import { LinkModel } from "@/models/link.model";
 import mongoose from "mongoose";
@@ -7,15 +7,19 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   await dbConnection();
   try {
-    const token = await authjwt(request);
+    
+    const token = await verifyToken(request)
     const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1", 10);
     if (!token) {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
-    const { _id } = token;
+    const { _id } = token.payload;
 
     const links = await LinkModel.aggregate([
-      { $match: { user: new mongoose.Types.ObjectId(_id) } },
+      { $match: { 
+        user: new mongoose.Types.ObjectId(_id) , 
+        isDeleted: false 
+      } },
       { $sort: { createdAt: -1 } },
       { $skip: (page - 1) * 10 },
       { $limit: 10 },
