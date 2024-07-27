@@ -1,9 +1,11 @@
 import { authjwt } from "@/lib/authJWT";
+import { dbConnection } from "@/lib/dbconnect";
 import { LinkModel } from "@/models/link.model";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  await dbConnection();
   try {
     const token = await authjwt(request);
     const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1", 10);
@@ -35,7 +37,6 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-
     return response;
   } catch (error: any) {
     console.error("Error while getting links:", error);

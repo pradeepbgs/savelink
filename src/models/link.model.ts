@@ -4,7 +4,8 @@ export interface Link extends Document {
     title: String,
     link:String,
     user:mongoose.Schema.Types.ObjectId,
-    tags:String[]
+    tags:String[],
+    createdAt:Date
 }
 
 const LinkSchema:Schema<Link> = new Schema({
@@ -23,6 +24,10 @@ const LinkSchema:Schema<Link> = new Schema({
     tags:{
         type:[String],
         required:false
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
     }
 })
 
