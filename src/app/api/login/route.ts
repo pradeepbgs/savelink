@@ -57,7 +57,11 @@ export async function POST(request:NextRequest) {
         },{status:200})
 
         response.cookies.set('token',token,{
-            httpOnly:true
+            httpOnly:true,
+            sameSite:'none',
+            path:'/',
+            domain: process.env.NODE_ENV === 'production' ? 'saveyourlinks.vercel.app' : undefined ,
+            secure:true,
         })
 
         return response;
