@@ -1,4 +1,4 @@
-import { authjwt } from "@/lib/authJWT";
+import { verifyToken } from "@/lib/authJWT";
 import { dbConnection } from "@/lib/dbconnect";
 import { LinkModel } from "@/models/link.model";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,7 +7,7 @@ export const POST = async (request: NextRequest) => {
     await dbConnection();
     try {
         const reqBody = await request.json();
-        const token = await authjwt(request);
+        const token = await verifyToken(request);
         
         if (!token) {
             return NextResponse.json({
@@ -15,7 +15,7 @@ export const POST = async (request: NextRequest) => {
                  message: "Invalid token" }, { status: 401 });
         }
 
-        const { _id } = token;
+        const { _id } = token.payload;
         const { link, title, tags } = reqBody;
 
         const newLink = new LinkModel({
