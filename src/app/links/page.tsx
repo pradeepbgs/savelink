@@ -5,6 +5,8 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { Link } from "lucide-react";
+import Linkcard from "@/components/Linkcard";
 
 interface Link {
   _id: string;
@@ -47,18 +49,7 @@ const GetLinksPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const res = await axios.post('/api/links/delete-link', { link_id: id });
-      if (res.data.success) {
-        toast({
-          title: "Link deleted successfully",
-          description: "Your link has been deleted successfully",
-        })
-      }
       setLinks(links.filter((link) => link._id !== id));
-    } catch (err) {
-      setError("Failed to delete link");
-    }
   };
 
   return (
@@ -78,40 +69,7 @@ const GetLinksPage = () => {
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {links.map((link) => (
-              <motion.div
-                key={link._id}
-                className="bg-white shadow-md rounded-lg p-6"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <h2 className="text-xl font-semibold mb-2">{link.title}</h2>
-                <a
-                  href={link.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline break-all"
-                >
-                  {link.link}
-                </a>
-                <p className="text-gray-600 text-sm mt-2">
-                  {new Date(link.createdAt).toLocaleString()}
-                </p>
-                <div className="mt-3">
-                  {link.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-8">
-                <Button onClick={() => handleDelete(link._id)} variant={'default'}>
-                    Delete
-                  </Button>
-                </div>
-              </motion.div>
+              <Linkcard key={link._id} link={link} onLinkDeleted={handleDelete} />
             ))}
           </div>
           <div className="mt-8 flex justify-center">
