@@ -62,6 +62,7 @@ export async function POST(request:NextRequest) {
             path:'/',
             domain: process.env.NODE_ENV === 'production' ? 'saveyourlinks.vercel.app' : undefined ,
             secure:true,
+            maxAge: 60 * 60 * 24 * 10,
         })
 
         return response;
