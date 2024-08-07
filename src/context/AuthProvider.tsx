@@ -1,13 +1,14 @@
 'use client'
 
-import { SessionProvider } from "next-auth/react"
+import store from "@/lib/store"
+import {Provider} from 'react-redux'
 
 export default function AuthProvider({
   children,
 }:{children:React.ReactNode}) {
   return (
-    <SessionProvider >
+    <Provider store={store}>
       {children}
-    </SessionProvider>
+    </Provider>
   )
 }

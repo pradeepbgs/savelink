@@ -2,36 +2,39 @@
 
 import { Loader2, Link as LinkIcon, LogIn, Tag } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/use-toast';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/types";
+import { setAuthenticated } from "@/lib/authSlice";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [link, setLink] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
-  const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useDispatch()
+
+  const isLoggedIn = useSelector((state:RootState) => state.auth.isLoggedIn)
 
   const checkAuthStatus = async () => {
     setIsCheckingAuth(true);
     try {
       const response = await axios.get('/api/check-auth', { withCredentials: true });
-      setIsAuthenticated(response.data.isAuthenticated);
+      dispatch(setAuthenticated(response.data.isAuthenticated))
     } catch (error) {
       console.error('Error checking auth status:', error);
-      setIsAuthenticated(false);
+      dispatch(setAuthenticated(false))
     } finally {
       setIsCheckingAuth(false);
     }
   };
 
   const handleSaveLink = async () => {
-    if (!isAuthenticated || !link) return;
+    if (!isLoggedIn || !link) return;
 
     setIsLoading(true);
     try {
@@ -62,7 +65,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    checkAuthStatus();
+    if (!isLoggedIn) {
+      checkAuthStatus();
+    }
   }, []);
 
   return (
@@ -76,12 +81,12 @@ export default function Home() {
         </p>
       </section>
 
-      {isCheckingAuth ? (
+      {!isLoggedIn ? (
         <div className="flex items-center justify-center">
           <Loader2 className="animate-spin mr-2" />
           <span>Checking authentication...</span>
         </div>
-      ) : isAuthenticated ? (
+      ) : isLoggedIn ? (
         <section className="w-full max-w-sm sm:max-w-md md:max-w-lg">
           <div className="bg-gray-700 rounded-lg p-4 sm:p-6 shadow-lg">
             <div className="flex items-center mb-4">
