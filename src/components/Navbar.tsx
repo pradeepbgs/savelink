@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   const handleLogout = async () => {
-    const res = await axios.post('/api/logout', { withCredentials: true })
+    const res = await axios.get('/api/logout')
     if(res.data.success){
       router.push('/')
       disptch(setAuthenticated(false))
