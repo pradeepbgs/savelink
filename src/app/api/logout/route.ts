@@ -16,7 +16,8 @@ export async function GET(request:NextRequest){
             expires:new Date(0),
             path:'/',
             secure:process.env.NODE_ENV === 'production',
-            sameSite:'lax'
+            sameSite:'lax',
+            domain:'https://saveyourlinks.vercel.app/'
         })
 
         return response;
