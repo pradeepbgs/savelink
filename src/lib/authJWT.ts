@@ -16,7 +16,6 @@ export async function verifyToken(request: NextRequest): Promise<any> {
         }
 
         const {payload} = await jwtVerify(token, secret);
-        request.headers.set('user', JSON.stringify(payload));
         return {payload};
     } catch (error: any) {
         console.error("JWT verification error:", error.message);

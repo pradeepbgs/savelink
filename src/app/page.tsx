@@ -10,15 +10,16 @@ import { RootState } from "@/lib/types";
 import { setAuthenticated } from "@/lib/authSlice";
 
 export default function Home() {
+  const isLoggedIn = useSelector((state:RootState) => state.auth.isLoggedIn)
+  
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(!isLoggedIn);
   const [link, setLink] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
   const { toast } = useToast();
   const dispatch = useDispatch()
 
-  const isLoggedIn = useSelector((state:RootState) => state.auth.isLoggedIn)
 
   const checkAuthStatus = async () => {
     setIsCheckingAuth(true);
@@ -67,6 +68,8 @@ export default function Home() {
   useEffect(() => {
     if (!isLoggedIn) {
       checkAuthStatus();
+    } else {
+      setIsCheckingAuth(false);
     }
   }, []);
 
@@ -81,7 +84,7 @@ export default function Home() {
         </p>
       </section>
 
-      {!isLoggedIn ? (
+      {isCheckingAuth ? (
         <div className="flex items-center justify-center">
           <Loader2 className="animate-spin mr-2" />
           <span>Checking authentication...</span>

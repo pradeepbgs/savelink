@@ -3,13 +3,28 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Button } from './ui/button';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { setAuthenticated } from '@/lib/authSlice';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter()
+  const disptch = useDispatch()
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
+  const handleLogout = async () => {
+    const res = await axios.post('/api/logout', { withCredentials: true })
+    if(res.data.success){
+      router.push('/')
+      disptch(setAuthenticated(false))
+    }
+  }
 
   return (
     <nav className="bg-gray-800 text-white p-4">
@@ -18,8 +33,16 @@ const Navbar = () => {
           SaveLink
         </Link>
         <div className="hidden md:flex space-x-4">
+        <Button 
+        onClick={handleLogout} 
+        className="hover:text-blue-500 transition duration-200 mr-5">
+            Logout
+          </Button>
           <Link href="/links" className="hover:text-blue-500 transition duration-200">
+          <Button  
+        className="hover:text-blue-500 transition duration-200 mr-5">
             Links
+          </Button>
           </Link>
         </div>
         <div className="md:hidden">
@@ -34,6 +57,11 @@ const Navbar = () => {
             <Link href="/" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-blue-500 transition duration-200">
               Home
             </Link>
+            <Button 
+            onClick={handleLogout} 
+            className="hover:text-blue-500 transition duration-200 ">
+            Logout
+          </Button>
             <Link href="/links" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-blue-500 transition duration-200">
               Links
             </Link>

@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const decodedToken = await verifyToken(request);
   // Define routes that require authentication
-  const protectedRoutes = ['/links'];
+  const protectedRoutes = ['/links/save'];
 
   // If the user is not authenticated and trying to access a protected route
   if (!decodedToken && protectedRoutes.includes(pathname)) {
