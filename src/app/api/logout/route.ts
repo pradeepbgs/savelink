@@ -13,7 +13,10 @@ export async function GET(request:NextRequest){
 
         response.cookies.set('token','',{
             httpOnly:true,
-            expires:new Date(0)
+            expires:new Date(0),
+            path:'/',
+            secure:process.env.NODE_ENV === 'production',
+            sameSite:'lax'
         })
 
         return response;

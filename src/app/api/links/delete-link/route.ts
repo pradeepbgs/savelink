@@ -7,15 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request:NextRequest) {
     await dbConnection();
-    const token = await verifyToken(request)
-    if (!token) {
-        return NextResponse.json({
-            success: false,
-            message: "Unauthorized"
-        }, { status: 401 });
-    }
      const {link_id} = await request.json();
-     const user_id = token._id;
      try {
         if (!link_id) {
             return NextResponse.json({   
@@ -25,7 +17,6 @@ export async function POST(request:NextRequest) {
         }
         const link = await LinkModel.findOne({
             _id:link_id,
-            user:user_id,
             isDeleted:false
         })
         if (!link) {
