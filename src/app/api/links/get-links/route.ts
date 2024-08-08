@@ -1,6 +1,7 @@
 import { verifyToken } from "@/lib/authJWT";
 import { dbConnection } from "@/lib/dbconnect";
 import { LinkModel } from "@/models/link.model";
+import { userModel } from "@/models/user.model";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,11 +16,19 @@ export async function GET(request: NextRequest) {
     }
     const { _id } = token.payload;
 
-    const links = await LinkModel.aggregate([
-      { $match: { 
-        user: new mongoose.Types.ObjectId(_id) , 
+    const user = await userModel.findById(_id);
+    const admin = user?.admin;
+    let matchCondition = {};
+
+    if (!admin) {
+      matchCondition = { 
+        user: new mongoose.Types.ObjectId(_id), 
         isDeleted: false 
-      } },
+      };
+    }
+
+    const links = await LinkModel.aggregate([
+      { $match: matchCondition},
       { $sort: { createdAt: -1 } },
       { $skip: (page - 1) * 10 },
       { $limit: 10 },
@@ -30,6 +39,8 @@ export async function GET(request: NextRequest) {
           link: 1,
           tags: 1,
           createdAt: 1,
+          user: 1,
+          isDeleted: 1,
         },
       },
     ]);
