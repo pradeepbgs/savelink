@@ -1,11 +1,8 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Link } from "lucide-react";
 import Linkcard from "@/components/Linkcard";
 
 interface Link {
@@ -21,24 +18,27 @@ const GetLinksPage = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState(""); 
+
+  const fetchLinks = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get(
+        `/api/links/get-links?page=${page}&filter=${search}`
+      );
+      setLinks(response.data.data);
+    } catch (err) {
+      setError("Failed to fetch links");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLinks = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get(`/api/links/get-links?page=${page}`);
-        setLinks(response.data.data);
-      } catch (err) {
-        setError("Failed to fetch links");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchLinks();
-  }, [page]);
+  }, [page,search]);
 
   const handlePreviousPage = () => {
     if (page > 1) setPage(page - 1);
@@ -49,12 +49,23 @@ const GetLinksPage = () => {
   };
 
   const handleDelete = async (id: string) => {
-      setLinks(links.filter((link) => link._id !== id));
+    setLinks(links.filter((link) => link._id !== id));
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Your Links</h1>
+      
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search by title or tags..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+
       {loading && (
         <div className="flex justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

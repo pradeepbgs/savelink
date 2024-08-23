@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
     
     const token = await verifyToken(request)
     const page = parseInt(request.nextUrl.searchParams.get("page") ?? "1", 10);
+    const filter = request.nextUrl.searchParams.get("filter") // search filter
     if (!token) {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     const user = await userModel.findById(_id);
     const admin = user?.admin;
-    let matchCondition = {};
+    let matchCondition: any = {};
 
     if (!admin) {
       matchCondition = { 
@@ -27,8 +28,16 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    if (filter) {
+      matchCondition["$or"] = [
+        { title: { $regex: filter, $options: "i" } },
+        { tags: { $regex: filter, $options: "i" } },
+      ];
+    }
+
     const links = await LinkModel.aggregate([
       { $match: matchCondition},
+      // ned to add serch filetr
       { $sort: { createdAt: -1 } },
       { $skip: (page - 1) * 10 },
       { $limit: 10 },
