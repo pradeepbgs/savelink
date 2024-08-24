@@ -14,11 +14,13 @@ interface Link {
 }
 
 const GetLinksPage = () => {
+
   const [links, setLinks] = useState<Link[]>([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState(""); 
+  const [search, setSearch] = useState<string | null>(""); 
+  const [debouncedSearch, setDebounceSearch] = useState<string | null>(null);
 
   const fetchLinks = async () => {
     setLoading(true);
@@ -36,9 +38,19 @@ const GetLinksPage = () => {
     }
   };
 
+  useEffect(() =>{
+    const handler = setTimeout(() =>{
+      setDebounceSearch(search);
+    },300)
+
+    return () => {
+      clearTimeout(handler);
+    }
+  },[search])
+
   useEffect(() => {
     fetchLinks();
-  }, [page,search]);
+  }, [page,debouncedSearch]);
 
   const handlePreviousPage = () => {
     if (page > 1) setPage(page - 1);
@@ -60,7 +72,7 @@ const GetLinksPage = () => {
         <input
           type="text"
           placeholder="Search by title or tags..."
-          value={search}
+          value={search!}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md"
         />
