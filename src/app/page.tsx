@@ -150,7 +150,7 @@ export default function Home() {
             <div className="mt-4 pt-4 border-t border-white/[0.05] flex justify-center">
               <Link
                 href="/links"
-                className="text-sm text-slate-300 hover:text-violet-400 transition-colors flex items-center gap-1.5"
+                className="text-sm text-slate-200 hover:text-violet-400 transition-colors flex items-center gap-1.5"
               >
                 <Bookmark className="w-3.5 h-3.5" />
                 View all saved links
